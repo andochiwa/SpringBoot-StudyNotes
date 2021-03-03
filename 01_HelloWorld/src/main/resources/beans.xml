@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--没有用springboot的创建对象的方法-->
+    <bean id="user" class="com.github.boot.bean.User">
+        <property name="name" value="zhangsan"/>
+        <property name="age" value="20"/>
+    </bean>
+
+    <bean id="pet" class="com.github.boot.bean.Pet">
+        <property name="name" value="Tomcat"/>
+    </bean>
+
+</beans>
