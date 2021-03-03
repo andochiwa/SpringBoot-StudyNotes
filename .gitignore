@@ -1,0 +1,14 @@
+/.settings
+/bin
+/target
+/out
+
+*.MF
+*.iml
+*.exe
+
+.project
+.classpath
+
+.idea
+*.class
