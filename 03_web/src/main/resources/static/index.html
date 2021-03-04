@@ -5,6 +5,20 @@
     <title>Title</title>
 </head>
 <body>
-<h1>Test</h1>
+REST style test
+<form action="/user" method="get">
+    <input value="REST-GET submit" type="submit">
+</form>
+<form action="/user" method="post">
+    <input value="REST-GET submit" type="submit">
+</form>
+<form action="/user" method="post">
+    <input type="hidden" name="_method" value="DELETE">
+    <input value="REST-DELETE submit" type="submit">
+</form>
+<form action="/user" method="post">
+    <input type="hidden" name="_method" value="put">
+    <input value="REST-PUT submit" type="submit">
+</form>
 </body>
 </html>
