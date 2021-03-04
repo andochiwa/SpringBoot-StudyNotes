@@ -1,7 +1,8 @@
-spring:
-  mvc:
-    static-path-pattern: /res/**
+#spring:
+#  mvc:
+#    static-path-pattern: /res/**
+# 静态资源不能有前缀，会冲突
 
-  web:
-    resources:
-      static-locations: classpath:/img/
+#  web:
+#    resources:
+#      static-locations: classpath:/index/
