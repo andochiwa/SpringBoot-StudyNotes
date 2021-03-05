@@ -681,25 +681,23 @@ q为权重
 
 
 
-#### 1.2、SpringMVC到底支持哪些返回值
+#### 1.2、SpringMVC支持的返回值
 
-```
-ModelAndView
-Model
-View
-ResponseEntity 
-ResponseBodyEmitter
-StreamingResponseBody
-HttpEntity
-HttpHeaders
-Callable
-DeferredResult
-ListenableFuture
-CompletionStage
-WebAsyncTask
-有 @ModelAttribute 且为对象类型的
-@ResponseBody 注解 ---> RequestResponseBodyMethodProcessor；
-```
+1. ModelAndView
+2. Model
+3. View
+4. ResponseEntity 
+5. ResponseBodyEmitter
+6. StreamingResponseBody
+7. HttpEntity
+8. HttpHeaders
+9. Callable
+10. DeferredResult
+11. ListenableFuture
+12. CompletionStage
+13. WebAsyncTask
+14. 有 @ModelAttribute 且为对象类型的
+15. @ResponseBody 注解 ---> RequestResponseBodyMethodProcessor
 
 #### 1.3、HTTPMessageConverter(消息转换器)原理
 
@@ -717,7 +715,7 @@ HttpMessageConverter: 看是否支持将 此 Class类型的对象，转为MediaT
 
 ![image-20210306001204413](C:\Users\10660\AppData\Roaming\Typora\typora-user-images\image-20210306001204413.png)
 
-0 - 只支持Byte类型的
+只支持Byte类型的
 
 1 - String
 
@@ -743,7 +741,7 @@ HttpMessageConverter: 看是否支持将 此 Class类型的对象，转为MediaT
 
 #### 1、引入xml依赖
 
-```
+```xml
  <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-xml</artifactId>
@@ -754,7 +752,7 @@ HttpMessageConverter: 看是否支持将 此 Class类型的对象，转为MediaT
 
 只需要改变请求头中Accept字段。Http协议中规定的，告诉服务器本客户端可以接收的数据类型。
 
-![image.png](https://cdn.nlark.com/yuque/0/2020/png/1354552/1605173127653-8a06cd0f-b8e1-4e22-9728-069b942eba3f.png?x-oss-process=image%2Fwatermark%2Ctype_d3F5LW1pY3JvaGVp%2Csize_14%2Ctext_YXRndWlndS5jb20g5bCa56GF6LC3%2Ccolor_FFFFFF%2Cshadow_50%2Ct_80%2Cg_se%2Cx_10%2Cy_10)
+![image-20210306003307805](C:\Users\10660\AppData\Roaming\Typora\typora-user-images\image-20210306003307805.png)
 
 
 
