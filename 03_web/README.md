@@ -766,13 +766,7 @@ spring:
       favor-parameter: true  #开启请求参数内容协商模式
 ```
 
-发请求： http://localhost:8080/test/person?format=json
 
-[http://localhost:8080/test/person?format=](http://localhost:8080/test/person?format=json)xml
-
-
-
-![image.png](https://cdn.nlark.com/yuque/0/2020/png/1354552/1605230907471-b0ed34bc-6782-40e7-84b7-615726312f01.png?x-oss-process=image%2Fwatermark%2Ctype_d3F5LW1pY3JvaGVp%2Csize_10%2Ctext_YXRndWlndS5jb20g5bCa56GF6LC3%2Ccolor_FFFFFF%2Cshadow_50%2Ct_80%2Cg_se%2Cx_10%2Cy_10)
 
 确定客户端接收什么样的内容类型；
 
