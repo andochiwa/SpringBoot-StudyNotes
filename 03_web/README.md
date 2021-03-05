@@ -772,8 +772,6 @@ spring:
 
 1、Parameter策略优先确定是要返回json数据（获取请求头中的format的值）
 
-![image.png](https://cdn.nlark.com/yuque/0/2020/png/1354552/1605231074299-25f5b062-2de1-4a09-91bf-11e018d6ec0e.png)
-
 2、最终进行内容协商返回给客户端json即可。
 
 #### 4、内容协商原理
@@ -782,9 +780,7 @@ spring:
 - **2、获取客户端（PostMan、浏览器）支持接收的内容类型。（获取客户端Accept请求头字段）【application/xml】**
 
 - - **contentNegotiationManager 内容协商管理器 默认使用基于请求头的策略**
-  - **![image.png](https://cdn.nlark.com/yuque/0/2020/png/1354552/1605230462280-ef98de47-6717-4e27-b4ec-3eb0690b55d0.png)**
   - **HeaderContentNegotiationStrategy  确定客户端可以接收的内容类型** 
-  - **![image.png](https://cdn.nlark.com/yuque/0/2020/png/1354552/1605230546376-65dcf657-7653-4a58-837a-f5657778201a.png)**
 
 - 3、遍历循环所有当前系统的 **MessageConverter**，看谁支持操作这个对象（Person）
 - 4、找到支持操作Person的converter，把converter支持的媒体类型统计出来。
@@ -800,23 +796,6 @@ spring:
 ![image.png](https://cdn.nlark.com/yuque/0/2020/png/1354552/1605173657818-73331882-6086-490c-973b-af46ccf07b32.png?x-oss-process=image%2Fwatermark%2Ctype_d3F5LW1pY3JvaGVp%2Csize_10%2Ctext_YXRndWlndS5jb20g5bCa56GF6LC3%2Ccolor_FFFFFF%2Cshadow_50%2Ct_80%2Cg_se%2Cx_10%2Cy_10)
 
 导入了jackson处理xml的包，xml的converter就会自动进来
-
-```
-WebMvcConfigurationSupport
-jackson2XmlPresent = ClassUtils.isPresent("com.fasterxml.jackson.dataformat.xml.XmlMapper", classLoader);
-
-if (jackson2XmlPresent) {
-            Jackson2ObjectMapperBuilder builder = Jackson2ObjectMapperBuilder.xml();
-            if (this.applicationContext != null) {
-                builder.applicationContext(this.applicationContext);
-            }
-            messageConverters.add(new MappingJackson2XmlHttpMessageConverter(builder.build()));
-        }
-```
-
-
-
-
 
 
 
@@ -848,20 +827,6 @@ SpringMVC的什么功能。一个入口给容器中添加一个  WebMvcConfigure
         }
     }
 ```
-
-
-
-
-
-![image.png](https://cdn.nlark.com/yuque/0/2020/png/1354552/1605260623995-8b1f7cec-9713-4f94-9cf1-8dbc496bd245.png?x-oss-process=image%2Fwatermark%2Ctype_d3F5LW1pY3JvaGVp%2Csize_10%2Ctext_YXRndWlndS5jb20g5bCa56GF6LC3%2Ccolor_FFFFFF%2Cshadow_50%2Ct_80%2Cg_se%2Cx_10%2Cy_10)
-
-
-
-
-
-
-
-![image.png](https://cdn.nlark.com/yuque/0/2020/png/1354552/1605261062877-0a27cc41-51cb-4018-a9af-4e0338a247cd.png?x-oss-process=image%2Fwatermark%2Ctype_d3F5LW1pY3JvaGVp%2Csize_10%2Ctext_YXRndWlndS5jb20g5bCa56GF6LC3%2Ccolor_FFFFFF%2Cshadow_50%2Ct_80%2Cg_se%2Cx_10%2Cy_10)
 
 
 
