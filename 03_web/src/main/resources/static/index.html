@@ -35,5 +35,15 @@ REST style test
 </form>
 <a href="cars/sell;low=34;brand=byd,audi,yd">矩阵变量测试cars/sell;low=34;brand=byd,audi,yd</a><br/>
 <a href="/boss/1;age=35/2;age=20">/boss/1;age=35/2;age=20</a>
+<br/>
+测试封装POJO：
+<form action="/saveuser" method="post">
+    username: <input name="userName" value="zhangsan"> <br/>
+    age: <input name="age" value="18"> <br/>
+    birthday: <input name="birth" value="2019/12/10"> <br/>
+    petName: <input name="pet.name" value="cat"> <br/>
+    petAge: <input name="pet.age" value="5"> <br/>
+    <input type="submit" value="save">
+</form>
 </body>
 </html>

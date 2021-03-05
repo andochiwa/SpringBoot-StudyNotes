@@ -397,19 +397,19 @@ SpringMVC功能分析都从 org.springframework.web.servlet.DispatcherServlet-�
 
 #### 1.2、Servlet API：
 
-WebRequest、ServletRequest、MultipartRequest、 HttpSession、javax.servlet.http.PushBuilder、Principal、InputStream、Reader、HttpMethod、Locale、TimeZone、ZoneId
+WebRequest、ServletRequest、MultipartRequest、 HttpSession、javax.servlet.http.PushBuilder、
 
+Principal、InputStream、Reader、HttpMethod、Locale、TimeZone、ZoneId
 
-
-**ServletRequestMethodArgumentResolver  以上的部分参数**
+**ServletRequestMethodArgumentResolver  可以解析以上的部分参数**
 
 #### 1.3、复杂参数：
 
 **Map**、**Model（map、model里面的数据会被放在request的请求域  request.setAttribute）、**Errors/BindingResult、**RedirectAttributes（ 重定向携带数据）**、**ServletResponse（response）**、SessionStatus、UriComponentsBuilder、ServletUriComponentsBuilder
 
-**Map、Model类型的参数**，会返回 mavContainer.getModel（）；---> BindingAwareModelMap 是Model 也是Map
+**Map、Model类型的参数**，会返回 mavContainer.getModel（）；---> **BindingAwareModelMap 是Model 也是Map**
 
-**mavContainer**.getModel(); 获取到值的
+**mavContainer**.getModel(); 获取到值
 
 #### 1.4、自定义对象参数：
 
@@ -429,10 +429,6 @@ WebRequest、ServletRequest、MultipartRequest、 HttpSession、javax.servlet.ht
 
 
 
-
-
-
-
 #### 1、HandlerAdapter
 
 ![image.png](https://cdn.nlark.com/yuque/0/2020/png/1354552/1603262942726-107353bd-f8b7-44f6-93cf-2a3cad4093cf.png)
@@ -441,7 +437,7 @@ WebRequest、ServletRequest、MultipartRequest、 HttpSession、javax.servlet.ht
 
 1 - 支持函数式编程的
 
-xxxxxx
+等等
 
 #### 2、执行目标方法
 
@@ -450,7 +446,6 @@ xxxxxx
 //DispatcherServlet -- doDispatch
 mv = ha.handle(processedRequest, response, mappedHandler.getHandler());
 mav = invokeHandlerMethod(request, response, handlerMethod); //执行目标方法
-
 
 //ServletInvocableHandlerMethod
 Object returnValue = invokeForRequest(webRequest, mavContainer, providedArgs);
@@ -466,7 +461,7 @@ SpringMVC目标方法能写多少种参数类型。取决于参数解析器。
 
 ![image.png](https://cdn.nlark.com/yuque/0/2020/png/1354552/1603263283504-85bbd4d5-a9af-4dbf-b6a2-30b409868774.png?x-oss-process=image%2Fwatermark%2Ctype_d3F5LW1pY3JvaGVp%2Csize_10%2Ctext_YXRndWlndS5jb20g5bCa56GF6LC3%2Ccolor_FFFFFF%2Cshadow_50%2Ct_80%2Cg_se%2Cx_10%2Cy_10)
 
-![image.png](https://cdn.nlark.com/yuque/0/2020/png/1354552/1603263394724-33122714-9d06-42ec-bf45-e440e8b49c05.png)
+判断依据
 
 - 当前解析器是否支持解析这种参数
 - 支持就调用 resolveArgument
@@ -481,50 +476,11 @@ SpringMVC目标方法能写多少种参数类型。取决于参数解析器。
 
 ### 5、如何确定目标方法每一个参数的值
 
-```
-============InvocableHandlerMethod==========================
-protected Object[] getMethodArgumentValues(NativeWebRequest request, @Nullable ModelAndViewContainer mavContainer,
-            Object... providedArgs) throws Exception {
-
-        MethodParameter[] parameters = getMethodParameters();
-        if (ObjectUtils.isEmpty(parameters)) {
-            return EMPTY_ARGS;
-        }
-
-        Object[] args = new Object[parameters.length];
-        for (int i = 0; i < parameters.length; i++) {
-            MethodParameter parameter = parameters[i];
-            parameter.initParameterNameDiscovery(this.parameterNameDiscoverer);
-            args[i] = findProvidedArgument(parameter, providedArgs);
-            if (args[i] != null) {
-                continue;
-            }
-            if (!this.resolvers.supportsParameter(parameter)) {
-                throw new IllegalStateException(formatArgumentError(parameter, "No suitable resolver"));
-            }
-            try {
-                args[i] = this.resolvers.resolveArgument(parameter, mavContainer, request, this.dataBinderFactory);
-            }
-            catch (Exception ex) {
-                // Leave stack trace for later, exception may actually be resolved and handled...
-                if (logger.isDebugEnabled()) {
-                    String exMsg = ex.getMessage();
-                    if (exMsg != null && !exMsg.contains(parameter.getExecutable().toGenericString())) {
-                        logger.debug(formatArgumentError(parameter, exMsg));
-                    }
-                }
-                throw ex;
-            }
-        }
-        return args;
-    }
-```
-
-#### 5.1、挨个判断所有参数解析器那个支持解析这个参数
+#### 5.1、循环所有解析器判断哪个参数解析器支持解析这个参数
 
 ```
-    @Nullable
-    private HandlerMethodArgumentResolver getArgumentResolver(MethodParameter parameter) {
+@Nullable
+private HandlerMethodArgumentResolver getArgumentResolver(MethodParameter parameter) {
         HandlerMethodArgumentResolver result = this.argumentResolverCache.get(parameter);
         if (result == null) {
             for (HandlerMethodArgumentResolver resolver : this.argumentResolvers) {
@@ -536,14 +492,14 @@ protected Object[] getMethodArgumentValues(NativeWebRequest request, @Nullable M
             }
         }
         return result;
-    }
+   }
 ```
+
+如果找到了参数解析器，springmvc会将其缓存起来，下次就不用再循环判断
 
 #### 5.2、解析这个参数的值
 
-```
 调用各自 HandlerMethodArgumentResolver 的 resolveArgument 方法即可
-```
 
 #### 5.3、自定义类型参数 封装POJO
 
