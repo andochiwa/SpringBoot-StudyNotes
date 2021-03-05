@@ -48,7 +48,7 @@ public class MyConverter implements HttpMessageConverter<Person> {
     public void write(Person person, MediaType contentType, HttpOutputMessage outputMessage) throws IOException, HttpMessageNotWritableException {
         // 自定义协议数据的写出
         String data = person.getUserName() + ";" + person.getAge() + ";" + person.getBirth();
-        // 把数据写到流里去
+        // 把数据写到流里去 http://localhost:8080/test/person?format=json
         OutputStream body = outputMessage.getBody();
         body.write(data.getBytes());
     }
