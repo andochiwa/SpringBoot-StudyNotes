@@ -348,8 +348,6 @@ SpringMVC功能分析都从 org.springframework.web.servlet.DispatcherServlet-�
 
 **RequestMappingHandlerMapping**：保存了所有@RequestMapping 和handler的映射规则。
 
-![image.png](https://cdn.nlark.com/yuque/0/2020/png/1354552/1603181662070-9e526de8-fd78-4a02-9410-728f059d6aef.png?x-oss-process=image%2Fwatermark%2Ctype_d3F5LW1pY3JvaGVp%2Csize_14%2Ctext_YXRndWlndS5jb20g5bCa56GF6LC3%2Ccolor_FFFFFF%2Cshadow_50%2Ct_80%2Cg_se%2Cx_10%2Cy_10%2Fresize%2Cw_1500)
-
 所有的请求映射都在HandlerMapping中。
 
 - SpringBoot自动配置欢迎页的 WelcomePageHandlerMapping 。访问 /能访问到index.html；
@@ -407,7 +405,7 @@ Principal、InputStream、Reader、HttpMethod、Locale、TimeZone、ZoneId
 
 **Map**、**Model（map、model里面的数据会被放在request的请求域  request.setAttribute）、**Errors/BindingResult、**RedirectAttributes（ 重定向携带数据）**、**ServletResponse（response）**、SessionStatus、UriComponentsBuilder、ServletUriComponentsBuilder
 
-**Map、Model类型的参数**，会返回 mavContainer.getModel（）；---> **BindingAwareModelMap 是Model 也是Map**
+**Map和Model类型的参数**，都会返回 mavContainer.getModel（）；---> **BindingAwareModelMap 是Model 也是Map**，即他们都为同一对象
 
 **mavContainer**.getModel(); 获取到值
 
@@ -459,7 +457,7 @@ Object[] args = getMethodArgumentValues(request, mavContainer, providedArgs);
 
 SpringMVC目标方法能写多少种参数类型。取决于参数解析器。
 
-![image.png](https://cdn.nlark.com/yuque/0/2020/png/1354552/1603263283504-85bbd4d5-a9af-4dbf-b6a2-30b409868774.png?x-oss-process=image%2Fwatermark%2Ctype_d3F5LW1pY3JvaGVp%2Csize_10%2Ctext_YXRndWlndS5jb20g5bCa56GF6LC3%2Ccolor_FFFFFF%2Cshadow_50%2Ct_80%2Cg_se%2Cx_10%2Cy_10)
+![image-20210305220451812](C:\Users\10660\AppData\Roaming\Typora\typora-user-images\image-20210305220451812.png)
 
 判断依据
 
@@ -470,9 +468,7 @@ SpringMVC目标方法能写多少种参数类型。取决于参数解析器。
 
 ### 4、返回值处理器
 
-![image.png](https://cdn.nlark.com/yuque/0/2020/png/1354552/1603263524227-386da4be-43b1-4b17-a2cc-8cf886346af9.png?x-oss-process=image%2Fwatermark%2Ctype_d3F5LW1pY3JvaGVp%2Csize_10%2Ctext_YXRndWlndS5jb20g5bCa56GF6LC3%2Ccolor_FFFFFF%2Cshadow_50%2Ct_80%2Cg_se%2Cx_10%2Cy_10)
-
-
+![image-20210305220428827](C:\Users\10660\AppData\Roaming\Typora\typora-user-images\image-20210305220428827.png)
 
 ### 5、如何确定目标方法每一个参数的值
 
@@ -503,92 +499,9 @@ private HandlerMethodArgumentResolver getArgumentResolver(MethodParameter parame
 
 #### 5.3、自定义类型参数 封装POJO
 
-**ServletModelAttributeMethodProcessor  这个参数处理器支持**
+**ServletModelAttributeMethodProcessor  这个参数处理器来解析**
 
- **是否为简单类型。**
 
-```
-public static boolean isSimpleValueType(Class<?> type) {
-        return (Void.class != type && void.class != type &&
-                (ClassUtils.isPrimitiveOrWrapper(type) ||
-                Enum.class.isAssignableFrom(type) ||
-                CharSequence.class.isAssignableFrom(type) ||
-                Number.class.isAssignableFrom(type) ||
-                Date.class.isAssignableFrom(type) ||
-                Temporal.class.isAssignableFrom(type) ||
-                URI.class == type ||
-                URL.class == type ||
-                Locale.class == type ||
-                Class.class == type));
-    }
-@Override
-    @Nullable
-    public final Object resolveArgument(MethodParameter parameter, @Nullable ModelAndViewContainer mavContainer,
-            NativeWebRequest webRequest, @Nullable WebDataBinderFactory binderFactory) throws Exception {
-
-        Assert.state(mavContainer != null, "ModelAttributeMethodProcessor requires ModelAndViewContainer");
-        Assert.state(binderFactory != null, "ModelAttributeMethodProcessor requires WebDataBinderFactory");
-
-        String name = ModelFactory.getNameForParameter(parameter);
-        ModelAttribute ann = parameter.getParameterAnnotation(ModelAttribute.class);
-        if (ann != null) {
-            mavContainer.setBinding(name, ann.binding());
-        }
-
-        Object attribute = null;
-        BindingResult bindingResult = null;
-
-        if (mavContainer.containsAttribute(name)) {
-            attribute = mavContainer.getModel().get(name);
-        }
-        else {
-            // Create attribute instance
-            try {
-                attribute = createAttribute(name, parameter, binderFactory, webRequest);
-            }
-            catch (BindException ex) {
-                if (isBindExceptionRequired(parameter)) {
-                    // No BindingResult parameter -> fail with BindException
-                    throw ex;
-                }
-                // Otherwise, expose null/empty value and associated BindingResult
-                if (parameter.getParameterType() == Optional.class) {
-                    attribute = Optional.empty();
-                }
-                bindingResult = ex.getBindingResult();
-            }
-        }
-
-        if (bindingResult == null) {
-            // Bean property binding and validation;
-            // skipped in case of binding failure on construction.
-            WebDataBinder binder = binderFactory.createBinder(webRequest, attribute, name);
-            if (binder.getTarget() != null) {
-                if (!mavContainer.isBindingDisabled(name)) {
-                    bindRequestParameters(binder, webRequest);
-                }
-                validateIfApplicable(binder, parameter);
-                if (binder.getBindingResult().hasErrors() && isBindExceptionRequired(binder, parameter)) {
-                    throw new BindException(binder.getBindingResult());
-                }
-            }
-            // Value type adaptation, also covering java.util.Optional
-            if (!parameter.getParameterType().isInstance(attribute)) {
-                attribute = binder.convertIfNecessary(binder.getTarget(), parameter.getParameterType(), parameter);
-            }
-            bindingResult = binder.getBindingResult();
-        }
-
-        // Add resolved attribute and BindingResult at the end of the model
-        Map<String, Object> bindingResultModel = bindingResult.getModel();
-        mavContainer.removeAttributes(bindingResultModel);
-        mavContainer.addAllAttributes(bindingResultModel);
-
-        return attribute;
-    }
-```
-
-###  
 
 **WebDataBinder binder = binderFactory.createBinder(webRequest, attribute, name);**
 
@@ -596,25 +509,11 @@ public static boolean isSimpleValueType(Class<?> type) {
 
 **WebDataBinder 利用它里面的 Converters 将请求数据转成指定的数据类型。再次封装到JavaBean中**
 
-**
-**
-
 **GenericConversionService：在设置每一个值的时候，找它里面的所有converter那个可以将这个数据类型（request带来参数的字符串）转换到指定的类型（JavaBean -- Integer）**
 
-**byte -- > file**
-
-**
-**
-
-@FunctionalInterface**public interface** Converter<S, T>
-
-### ![image.png](https://cdn.nlark.com/yuque/0/2020/png/1354552/1603337871521-25fc1aa1-133a-4ce0-a146-d565633d7658.png?x-oss-process=image%2Fwatermark%2Ctype_d3F5LW1pY3JvaGVp%2Csize_10%2Ctext_YXRndWlndS5jb20g5bCa56GF6LC3%2Ccolor_FFFFFF%2Cshadow_50%2Ct_80%2Cg_se%2Cx_10%2Cy_10)
 
 
-
-
-
-![image.png](https://cdn.nlark.com/yuque/0/2020/png/1354552/1603338486441-9bbd22a9-813f-49bd-b51b-e66c7f4b8598.png?x-oss-process=image%2Fwatermark%2Ctype_d3F5LW1pY3JvaGVp%2Csize_10%2Ctext_YXRndWlndS5jb20g5bCa56GF6LC3%2Ccolor_FFFFFF%2Cshadow_50%2Ct_80%2Cg_se%2Cx_10%2Cy_10%2Fresize%2Cw_1500)
+自定义类型转换实现的接口 **@FunctionalInterface public interface Converter<S, T>**
 
 
 
@@ -671,12 +570,309 @@ public static boolean isSimpleValueType(Class<?> type) {
 
 将所有的数据都放在 **ModelAndViewContainer**；包含要去的页面地址View。还包含Model数据。
 
-![image.png](https://cdn.nlark.com/yuque/0/2020/png/1354552/1603272018605-1bce3142-bdd9-4834-a028-c753e91c52ac.png?x-oss-process=image%2Fwatermark%2Ctype_d3F5LW1pY3JvaGVp%2Csize_10%2Ctext_YXRndWlndS5jb20g5bCa56GF6LC3%2Ccolor_FFFFFF%2Cshadow_50%2Ct_80%2Cg_se%2Cx_10%2Cy_10)
-
 ### 7、处理派发结果
 
 **processDispatchResult**(processedRequest, response, mappedHandler, mv, dispatchException);
 
-
-
 renderMergedOutputModel(mergedModel, getRequestToExpose(request), response);
+
+
+
+exposeModelAsRequestAttributes(model, request);
+
+关键方法，暴露模型作为请求域属性，把如果参数为map, model时，里面的key, value放进了请求域中
+    
+
+```java
+InternalResourceView：
+@Override
+    protected void renderMergedOutputModel(Map<String, Object> model, 
+                                           HttpServletRequest request, 
+                                           HttpServletResponse response) throws Exception {
+
+        // Expose the model object as request attributes.
+    	// 关键方法，暴露模型作为请求域属性，把如果参数为map, model时，里面的key, value放进了请求域中
+        exposeModelAsRequestAttributes(model, request);
+
+        // Expose helpers as request attributes, if any.
+        exposeHelpers(request);
+
+        // Determine the path for the request dispatcher.
+        String dispatcherPath = prepareForRendering(request, response);
+
+        // Obtain a RequestDispatcher for the target resource (typically a JSP).
+        RequestDispatcher rd = getRequestDispatcher(request, dispatcherPath);
+        if (rd == null) {
+            throw new ServletException("Could not get RequestDispatcher for [" + getUrl() +
+                    "]: Check that the corresponding file exists within your web application archive!");
+        }
+
+        // If already included or response already committed, perform include, else forward.
+        if (useInclude(request, response)) {
+            response.setContentType(getContentType());
+            if (logger.isDebugEnabled()) {
+                logger.debug("Including [" + getUrl() + "]");
+            }
+            rd.include(request, response);
+        }
+
+        else {
+            // Note: The forwarded resource is supposed to determine the content type itself.
+            if (logger.isDebugEnabled()) {
+                logger.debug("Forwarding to [" + getUrl() + "]");
+            }
+            rd.forward(request, response);
+        }
+    }
+```
+
+
+
+## 4、数据响应与内容协商
+
+### 1、响应JSON
+
+#### 1.1、jackson.jar+@ResponseBody
+
+给前端自动返回json数据；
+
+
+
+
+
+#### 1、返回值解析器
+
+![image-20210305235218517](C:\Users\10660\AppData\Roaming\Typora\typora-user-images\image-20210305235218517.png)
+
+
+
+
+
+
+
+
+
+#### 2、返回值解析器原理
+
+接口：
+
+### ![image.png](https://cdn.nlark.com/yuque/0/2020/png/1354552/1605151728659-68c8ce8a-1b2b-4ab0-b86d-c3a875184672.png)
+
+
+
+- 1、返回值处理器判断是否支持这种类型返回值 supportsReturnType
+- 2、返回值处理器调用 handleReturnValue 进行处理
+- 3、RequestResponseBodyMethodProcessor 可以处理返回值标了@ResponseBody 注解的。
+
+- - 1、利用 MessageConverters 进行处理 将数据写为json
+
+- - - 1、内容协商（浏览器默认会以请求头的方式告诉服务器他能接受什么样的内容类型）
+    - 2、服务器最终根据自己自身的能力，决定服务器能生产出什么样内容类型的数据，
+    - 3、SpringMVC会挨个遍历所有容器底层的 HttpMessageConverter ，看谁能处理？
+
+- - - - 1、得到MappingJackson2HttpMessageConverter可以将对象写为json
+      - 2、利用MappingJackson2HttpMessageConverter将对象转为json再写出去。
+
+
+
+![image.png](https://cdn.nlark.com/yuque/0/2020/png/1354552/1605163005521-a20d1d8e-0494-43d0-8135-308e7a22e896.png)
+
+q为权重
+
+
+
+#### 1.2、SpringMVC到底支持哪些返回值
+
+```
+ModelAndView
+Model
+View
+ResponseEntity 
+ResponseBodyEmitter
+StreamingResponseBody
+HttpEntity
+HttpHeaders
+Callable
+DeferredResult
+ListenableFuture
+CompletionStage
+WebAsyncTask
+有 @ModelAttribute 且为对象类型的
+@ResponseBody 注解 ---> RequestResponseBodyMethodProcessor；
+```
+
+#### 1.3、HTTPMessageConverter(消息转换器)原理
+
+##### 1、MessageConverter规范
+
+![image.png](https://cdn.nlark.com/yuque/0/2020/png/1354552/1605163447900-e2748217-0f31-4abb-9cce-546b4d790d0b.png)
+
+HttpMessageConverter: 看是否支持将 此 Class类型的对象，转为MediaType类型的数据。
+
+例子：Person对象转为JSON。或者 JSON转为Person
+
+
+
+##### 2、默认的MessageConverter
+
+![image-20210306001204413](C:\Users\10660\AppData\Roaming\Typora\typora-user-images\image-20210306001204413.png)
+
+0 - 只支持Byte类型的
+
+1 - String
+
+3 - Resource
+
+4 - ResourceRegion
+
+5 - DOMSource.class \ SAXSource.class \ StAXSource.class \ StreamSource.class \ Source.class
+
+6 - MultiValueMap
+
+7 - **MappingJackson2HttpMessageConverter** 这是jackson的处理器 一定会返回true（什么都能处理）
+
+9 - 支持注解方式xml处理的。
+
+最终 MappingJackson2HttpMessageConverter  把对象转为JSON（利用底层的jackson的objectMapper转换的）
+
+
+
+### 2、内容协商
+
+根据客户端接收能力不同，返回不同媒体类型的数据。
+
+#### 1、引入xml依赖
+
+```
+ <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-xml</artifactId>
+</dependency>
+```
+
+#### 2、postman分别测试返回json和xml
+
+只需要改变请求头中Accept字段。Http协议中规定的，告诉服务器本客户端可以接收的数据类型。
+
+![image.png](https://cdn.nlark.com/yuque/0/2020/png/1354552/1605173127653-8a06cd0f-b8e1-4e22-9728-069b942eba3f.png?x-oss-process=image%2Fwatermark%2Ctype_d3F5LW1pY3JvaGVp%2Csize_14%2Ctext_YXRndWlndS5jb20g5bCa56GF6LC3%2Ccolor_FFFFFF%2Cshadow_50%2Ct_80%2Cg_se%2Cx_10%2Cy_10)
+
+
+
+#### 3、开启浏览器参数方式内容协商功能
+
+为了方便内容协商，开启基于请求参数的内容协商功能。
+
+```
+spring:
+    contentnegotiation:
+      favor-parameter: true  #开启请求参数内容协商模式
+```
+
+发请求： http://localhost:8080/test/person?format=json
+
+[http://localhost:8080/test/person?format=](http://localhost:8080/test/person?format=json)xml
+
+
+
+![image.png](https://cdn.nlark.com/yuque/0/2020/png/1354552/1605230907471-b0ed34bc-6782-40e7-84b7-615726312f01.png?x-oss-process=image%2Fwatermark%2Ctype_d3F5LW1pY3JvaGVp%2Csize_10%2Ctext_YXRndWlndS5jb20g5bCa56GF6LC3%2Ccolor_FFFFFF%2Cshadow_50%2Ct_80%2Cg_se%2Cx_10%2Cy_10)
+
+确定客户端接收什么样的内容类型；
+
+1、Parameter策略优先确定是要返回json数据（获取请求头中的format的值）
+
+![image.png](https://cdn.nlark.com/yuque/0/2020/png/1354552/1605231074299-25f5b062-2de1-4a09-91bf-11e018d6ec0e.png)
+
+2、最终进行内容协商返回给客户端json即可。
+
+#### 4、内容协商原理
+
+- 1、判断当前响应头中是否已经有确定的媒体类型。MediaType
+- **2、获取客户端（PostMan、浏览器）支持接收的内容类型。（获取客户端Accept请求头字段）【application/xml】**
+
+- - **contentNegotiationManager 内容协商管理器 默认使用基于请求头的策略**
+  - **![image.png](https://cdn.nlark.com/yuque/0/2020/png/1354552/1605230462280-ef98de47-6717-4e27-b4ec-3eb0690b55d0.png)**
+  - **HeaderContentNegotiationStrategy  确定客户端可以接收的内容类型** 
+  - **![image.png](https://cdn.nlark.com/yuque/0/2020/png/1354552/1605230546376-65dcf657-7653-4a58-837a-f5657778201a.png)**
+
+- 3、遍历循环所有当前系统的 **MessageConverter**，看谁支持操作这个对象（Person）
+- 4、找到支持操作Person的converter，把converter支持的媒体类型统计出来。
+- 5、客户端需要【application/xml】。服务端能力【10种、json、xml】
+-    ![image.png](https://cdn.nlark.com/yuque/0/2020/png/1354552/1605173876646-f63575e2-50c8-44d5-9603-c2d11a78adae.png)
+- 6、进行内容协商的最佳匹配媒体类型
+- 7、用 支持 将对象转为 最佳匹配媒体类型 的converter。调用它进行转化 。
+
+
+
+
+
+![image.png](https://cdn.nlark.com/yuque/0/2020/png/1354552/1605173657818-73331882-6086-490c-973b-af46ccf07b32.png?x-oss-process=image%2Fwatermark%2Ctype_d3F5LW1pY3JvaGVp%2Csize_10%2Ctext_YXRndWlndS5jb20g5bCa56GF6LC3%2Ccolor_FFFFFF%2Cshadow_50%2Ct_80%2Cg_se%2Cx_10%2Cy_10)
+
+导入了jackson处理xml的包，xml的converter就会自动进来
+
+```
+WebMvcConfigurationSupport
+jackson2XmlPresent = ClassUtils.isPresent("com.fasterxml.jackson.dataformat.xml.XmlMapper", classLoader);
+
+if (jackson2XmlPresent) {
+            Jackson2ObjectMapperBuilder builder = Jackson2ObjectMapperBuilder.xml();
+            if (this.applicationContext != null) {
+                builder.applicationContext(this.applicationContext);
+            }
+            messageConverters.add(new MappingJackson2XmlHttpMessageConverter(builder.build()));
+        }
+```
+
+
+
+
+
+
+
+#### 5、自定义 MessageConverter
+
+**实现多协议数据兼容。json、xml、x-guigu**
+
+**0、**@ResponseBody 响应数据出去 调用 **RequestResponseBodyMethodProcessor** 处理
+
+1、Processor 处理方法返回值。通过 **MessageConverter** 处理
+
+2、所有 **MessageConverter** 合起来可以支持各种媒体类型数据的操作（读、写）
+
+3、内容协商找到最终的 **messageConverter**；
+
+
+
+SpringMVC的什么功能。一个入口给容器中添加一个  WebMvcConfigurer
+
+```
+ @Bean
+    public WebMvcConfigurer webMvcConfigurer(){
+        return new WebMvcConfigurer() {
+
+            @Override
+            public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
+
+            }
+        }
+    }
+```
+
+
+
+
+
+![image.png](https://cdn.nlark.com/yuque/0/2020/png/1354552/1605260623995-8b1f7cec-9713-4f94-9cf1-8dbc496bd245.png?x-oss-process=image%2Fwatermark%2Ctype_d3F5LW1pY3JvaGVp%2Csize_10%2Ctext_YXRndWlndS5jb20g5bCa56GF6LC3%2Ccolor_FFFFFF%2Cshadow_50%2Ct_80%2Cg_se%2Cx_10%2Cy_10)
+
+
+
+
+
+
+
+![image.png](https://cdn.nlark.com/yuque/0/2020/png/1354552/1605261062877-0a27cc41-51cb-4018-a9af-4e0338a247cd.png?x-oss-process=image%2Fwatermark%2Ctype_d3F5LW1pY3JvaGVp%2Csize_10%2Ctext_YXRndWlndS5jb20g5bCa56GF6LC3%2Ccolor_FFFFFF%2Cshadow_50%2Ct_80%2Cg_se%2Cx_10%2Cy_10)
+
+
+
+
+
+**有可能我们添加的自定义的功能会覆盖默认很多功能，导致一些默认的功能失效。**
