@@ -3,6 +3,8 @@ spring:
     hiddenmethod:
       filter:
         enabled: true
+    contentnegotiation:
+      favor-parameter: true
 #  mvc:
 #    static-path-pattern: /res/**
 # 静态资源不能有前缀，会冲突
