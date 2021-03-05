@@ -26,7 +26,7 @@ public class MyConverter implements HttpMessageConverter<Person> {
 
     @Override
     public boolean canWrite(Class<?> clazz, MediaType mediaType) {
-        return false;
+        return clazz.isAssignableFrom(Person.class);
     }
 
     /**
@@ -47,7 +47,7 @@ public class MyConverter implements HttpMessageConverter<Person> {
     @Override
     public void write(Person person, MediaType contentType, HttpOutputMessage outputMessage) throws IOException, HttpMessageNotWritableException {
         // 自定义协议数据的写出
-        String data = person.getUserName() + ";" + person.getAge() + ";" + person.getBirth();
+        String data = person.toString();
         // 把数据写到流里去 http://localhost:8080/test/person?format=json
         OutputStream body = outputMessage.getBody();
         body.write(data.getBytes());
