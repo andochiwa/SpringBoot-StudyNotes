@@ -14,11 +14,24 @@ REST style test
 </form>
 <form action="/user" method="post">
     <input type="hidden" name="_method" value="DELETE">
+    <input type="hidden" name="_m" value="DELETE">
     <input value="REST-DELETE submit" type="submit">
 </form>
 <form action="/user" method="post">
     <input type="hidden" name="_method" value="put">
+    <input type="hidden" name="_m" value="put">
     <input value="REST-PUT submit" type="submit">
+</form>
+<hr/>
+测试基本注解
+<ul>
+    <a href="car/3/owner/lisi">car/{id}/owner/{username}</a>
+</ul>
+<form action="save" method="post">
+    测试@RequestBody获取数据 <br/>
+    username: <input name="username" type="text"> <br/>
+    email: <input type="text" name="email"><br/>
+    <input type="submit" value="submit">
 </form>
 </body>
 </html>
