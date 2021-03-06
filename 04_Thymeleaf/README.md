@@ -88,11 +88,9 @@ Default: (value) **?: (defaultvalue)**
 
 https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#setting-value-to-specific-attributes
 
-
-
 ## 4、迭代
 
-```
+```html
 <tr th:each="prod : ${prods}">
         <td th:text="${prod.name}">Onions</td>
         <td th:text="${prod.price}">2.41</td>
@@ -100,9 +98,7 @@ https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#setting-value-to
 </tr>
 ```
 
-
-
-```
+```html
 <tr th:each="prod,iterStat : ${prods}" th:class="${iterStat.odd}? 'odd'">
   <td th:text="${prod.name}">Onions</td>
   <td th:text="${prod.price}">2.41</td>
@@ -110,11 +106,9 @@ https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#setting-value-to
 </tr>
 ```
 
-
-
 ## 5、条件运算
 
-```
+```html
 <a href="comments.html"
 th:href="@{/product/comments(prodId=${prod.id})}"
 th:if="${not #lists.isEmpty(prod.comments)}">view</a>
@@ -122,7 +116,7 @@ th:if="${not #lists.isEmpty(prod.comments)}">view</a>
 
 
 
-```
+```html
 <div th:switch="${user.role}">
   <p th:case="'admin'">User is an administrator</p>
   <p th:case="#{roles.manager}">User is a manager</p>
@@ -130,13 +124,13 @@ th:if="${not #lists.isEmpty(prod.comments)}">view</a>
 </div>
 ```
 
-#  
+
 
 ## 6、属性优先级
 
-![image.png](https://cdn.nlark.com/yuque/0/2020/png/1354552/1605498132699-4fae6085-a207-456c-89fa-e571ff1663da.png?x-oss-process=image%2Fwatermark%2Ctype_d3F5LW1pY3JvaGVp%2Csize_14%2Ctext_YXRndWlndS5jb20g5bCa56GF6LC3%2Ccolor_FFFFFF%2Cshadow_50%2Ct_80%2Cg_se%2Cx_10%2Cy_10%2Fresize%2Cw_1500)
+![image-20210307015410194](C:\Users\10660\AppData\Roaming\Typora\typora-user-images\image-20210307015410194.png)
 
-#  
+
 
 # 2、thymeleaf使用
 
@@ -151,7 +145,7 @@ th:if="${not #lists.isEmpty(prod.comments)}">view</a>
 
 ## 2、springboot自动配置好了thymeleaf
 
-```
+```java
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(ThymeleafProperties.class)
 @ConditionalOnClass({ TemplateMode.class, SpringTemplateEngine.class })
@@ -166,105 +160,9 @@ public class ThymeleafAutoConfiguration { }
 - **3、配好了** **ThymeleafViewResolver** 
 - 4、我们只需要直接开发页面
 
-```
+```java
     public static final String DEFAULT_PREFIX = "classpath:/templates/";
 
     public static final String DEFAULT_SUFFIX = ".html";  //xxx.html
 ```
 
-## 3、页面开发
-
-```
-<!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<h1 th:text="${msg}">哈哈</h1>
-<h2>
-    <a href="www.atguigu.com" th:href="${link}">去百度</a>  <br/>
-    <a href="www.atguigu.com" th:href="@{link}">去百度2</a>
-</h2>
-</body>
-</html>
-```
-
-## 4、构建后台管理系统
-
-### 1、项目创建
-
-thymeleaf、web-starter、devtools、lombok
-
-
-
-### 2、静态资源处理
-
-自动配置好，我们只需要把所有静态资源放到 static 文件夹下
-
-### 3、路径构建
-
-th:action="@{/login}"
-
-
-
-### 4、模板抽取
-
-th:insert/replace/include
-
-
-
-### 5、页面跳转
-
-```
-    @PostMapping("/login")
-    public String main(User user, HttpSession session, Model model){
-
-        if(StringUtils.hasLength(user.getUserName()) && "123456".equals(user.getPassword())){
-            //把登陆成功的用户保存起来
-            session.setAttribute("loginUser",user);
-            //登录成功重定向到main.html;  重定向防止表单重复提交
-            return "redirect:/main.html";
-        }else {
-            model.addAttribute("msg","账号密码错误");
-            //回到登录页面
-            return "login";
-        }
-
-    }
-```
-
-
-
-### 6、数据渲染
-
-```
-    @GetMapping("/dynamic_table")
-    public String dynamic_table(Model model){
-        //表格内容的遍历
-        List<User> users = Arrays.asList(new User("zhangsan", "123456"),
-                new User("lisi", "123444"),
-                new User("haha", "aaaaa"),
-                new User("hehe ", "aaddd"));
-        model.addAttribute("users",users);
-
-        return "table/dynamic_table";
-    }
-        <table class="display table table-bordered" id="hidden-table-info">
-        <thead>
-        <tr>
-            <th>#</th>
-            <th>用户名</th>
-            <th>密码</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr class="gradeX" th:each="user,stats:${users}">
-            <td th:text="${stats.count}">Trident</td>
-            <td th:text="${user.userName}">Internet</td>
-            <td >[[${user.password}]]</td>
-        </tr>
-        </tbody>
-        </table>
-```
