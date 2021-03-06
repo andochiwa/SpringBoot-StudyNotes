@@ -13,12 +13,12 @@
 
     <!--logo and iconic logo start-->
     <div class="logo">
-        <a href="index.html">
+        <a th:href="@{/main.html}">
             <img src="images/logo.png" alt=""></a>
     </div>
 
     <div class="logo-icon text-center">
-        <a href="index.html">
+        <a th:href="@{/main.html}">
             <img src="images/logo_icon.png" alt=""></a>
     </div>
     <!--logo and iconic logo end-->
@@ -61,7 +61,7 @@
         <!--侧边栏导航开始-->
         <ul class="nav nav-pills nav-stacked custom-nav">
             <li class="menu-list">
-                <a href="index.html">
+                <a th:href="@{/main.html}">
                     <i class="fa fa-home"></i>
                     <span>Dashboard</span>
                 </a>
@@ -70,7 +70,7 @@
                         <a href="index_alt.html">Dashboard 1</a>
                     </li>
                     <li>
-                        <a href="index.html">Dashboard 2</a>
+                        <a th:href="@{/main.html}">Dashboard 2</a>
                     </li>
                 </ul>
             </li>
@@ -550,7 +550,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#">
+                        <a th:href="@{/}">
                             <i class="fa fa-sign-out"></i>
                             登出
                         </a>
