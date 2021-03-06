@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<!--引入名称空间-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1 th:text="${msg}">hello</h1>
+<h2>
+    <a href="www.baidu.com" th:href="${link}">go google($)</a> <br/>
+    <a href="www.baidu.com" th:href="@{link}">go google(@)</a>
+</h2>
+</body>
+</html>

@@ -159,8 +159,6 @@ th:if="${not #lists.isEmpty(prod.comments)}">view</a>
 public class ThymeleafAutoConfiguration { }
 ```
 
-
-
 自动配好的策略
 
 - 1、所有thymeleaf的配置值都在 ThymeleafProperties
