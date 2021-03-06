@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
@@ -24,14 +24,14 @@
 
 <div class="container">
 
-    <form class="form-signin" action="http://view.jqueryfuns.com/2014/4/10/7_df25ceea231ba5f44f0fc060c943cdae/index.html">
+    <form class="form-signin" action="index.html" method="post" th:action="@{/login}">
         <div class="form-signin-heading text-center">
             <h1 class="sign-title">登录</h1>
             <img src="images/login-logo.png" alt=""/>
         </div>
         <div class="login-wrap">
-            <input type="text" class="form-control" placeholder="用户名" autofocus>
-            <input type="password" class="form-control" placeholder="密码">
+            <input type="text" name="userName" class="form-control" placeholder="用户名" autofocus>
+            <input type="password" name="password" class="form-control" placeholder="密码">
 
             <button class="btn btn-lg btn-login btn-block" type="submit">
                 <i class="fa fa-check"></i>
