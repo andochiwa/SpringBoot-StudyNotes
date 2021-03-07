@@ -11,7 +11,7 @@ import javax.servlet.http.HttpSession;
  * 做登录检查
  * 配置工作：
  *  1.配置好拦截器要拦截哪些请求
- *  2.把这些配置放在容器中，配置类实现WebConfigurer并重写addInterceptors
+ *  2.把拦截器注册到容器中，配置类实现WebConfigurer并重写addInterceptors
  *  3.在registry中addInterceptor(new xxx)
  * @author HAN
  * @version 1.0
