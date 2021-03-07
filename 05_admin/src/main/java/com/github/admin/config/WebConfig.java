@@ -1,6 +1,6 @@
 package com.github.admin.config;
 
-import com.github.interceptor.LoginInterceptor;
+import com.github.admin.interceptor.LoginInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
