@@ -26,8 +26,8 @@
 
         <section class="error-wrapper text-center">
             <h1><img alt="" src="images/404-error.png"></h1>
-            <h2>page not found</h2>
-            <h3>We Couldn’t Find This Page</h3>
+            <h2 th:text="${status}">page not found</h2>
+            <h3 th:text="${message}">We Couldn’t Find This Page</h3>
             <a class="back-btn" th:href="@{/main.html}"> Back To Home</a>
         </section>
 

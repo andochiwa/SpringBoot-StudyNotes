@@ -1,6 +1,7 @@
 package com.github.admin.controller;
 
 import com.github.admin.bean.User;
+import com.github.admin.exception.UserTooManyException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,6 +31,9 @@ public class TableController {
                 new User("hello", "132465"),
                 new User("abcd", "18888"));
         model.addAttribute("users", users);
+        if (users.size() > 3) {
+            throw new UserTooManyException();
+        }
         return "table/dynamic_table";
     }
 
