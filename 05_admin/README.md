@@ -1,13 +1,13 @@
 # 用Thymeleaf构建后台管理项目
 
-
+password: 123456
 
 ## 6、拦截器
 
 ### 1、实现HandlerInterceptor 接口
 
 ```java
-public class LoginInterceptor implements HandlerInterceptor {
+public class Interceptor implements HandlerInterceptor {
 }
 ```
 
@@ -45,10 +45,6 @@ public class AdminWebConfig implements WebMvcConfigurer {
 **6、前面的步骤有任何异常都会直接倒序触发** afterCompletion
 
 7、页面成功渲染完成以后，也会倒序触发 afterCompletion
-
-
-
-![image.png](https://cdn.nlark.com/yuque/0/2020/png/1354552/1605764129365-5b31a748-1541-4bee-9692-1917b3364bc6.png?x-oss-process=image%2Fresize%2Cw_1500)
 
 
 
