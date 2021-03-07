@@ -164,15 +164,12 @@ spring:
 - - error/404.html  error/5xx.html；**有精确的错误状态码页面就匹配精确，没有就找 4xx.html；如果都没有就触发白页**
 
 - @ControllerAdvice+@ExceptionHandler处理全局异常；底层是 ExceptionHandlerExceptionResolver 支持的
-- @ResponseStatus+自定义异常 ；底层是 ResponseStatusExceptionResolver ，把responsestatus注解的信息底层调用 response.sendError(statusCode, resolvedReason)；tomcat发送的/error
+- @ResponseStatus+自定义异常 ；底层是 **ResponseStatusExceptionResolver** ，把responsestatus注解的信息底层调用 response.sendError(statusCode, resolvedReason)；这个是tomcat发送的/error
 - Spring底层的异常，如 参数类型转换异常；DefaultHandlerExceptionResolver 处理框架底层的异常。
 
 - - response.sendError(HttpServletResponse.SC_BAD_REQUEST, ex.getMessage()); 
-  - ![image.png](https://cdn.nlark.com/yuque/0/2020/png/1354552/1606114118010-f4aaf5ee-2747-4402-bc82-08321b2490ed.png)
 
 - 自定义实现 HandlerExceptionResolver 处理异常；可以作为默认的全局异常处理规则
-
-- - ![image.png](https://cdn.nlark.com/yuque/0/2020/png/1354552/1606114688649-e6502134-88b3-48db-a463-04c23eddedc7.png)
 
 - ErrorViewResolver  实现自定义处理异常；
 
@@ -244,4 +241,65 @@ processDispatchResult(processedRequest, response, mappedHandler, mv, dispatchExc
     - 3、默认的 DefaultErrorViewResolver ,作用是把响应状态码作为错误页的地址，拼接成error/500.html 
     - 4、模板引擎最终响应这个页面 error/500.html 
 
-# 
+## 9、Web原生组件注入（Servlet、Filter、Listener）
+
+### 1、使用Servlet API
+
+@ServletComponentScan(basePackages = "com.github.admin.servlet")  :指定原生Servlet组件都放在哪里
+
+@WebServlet(urlPatterns = "/my")：效果：直接响应，没有经过Spring的拦截器
+
+@WebFilter(urlPatterns={"/css/\*","/images/\*"}) 过滤器使用
+
+@WebListener 监听器使用
+
+推荐可以这种方式；
+
+
+
+扩展：DispatchServlet 如何注册进来
+
+- 容器中自动配置了  DispatcherServlet  属性绑定到 WebMvcProperties；对应的配置文件配置项是 spring.mvc。
+- 通过 ServletRegistrationBean<DispatcherServlet> 把 DispatcherServlet  配置进来。
+- 默认映射的路径是 / 。
+
+![image.png](https://cdn.nlark.com/yuque/0/2020/png/1354552/1606284869220-8b63d54b-39c4-40f6-b226-f5f095ef9304.png?x-oss-process=image%2Fwatermark%2Ctype_d3F5LW1pY3JvaGVp%2Csize_14%2Ctext_YXRndWlndS5jb20g5bCa56GF6LC3%2Ccolor_FFFFFF%2Cshadow_50%2Ct_80%2Cg_se%2Cx_10%2Cy_10)
+
+Tomcat-Servlet；
+
+多个Servlet都能处理到同一层路径，精确优选原则（因此优先来到/my路径,而不是先到/路径,因此不会走Spring流程,而是走Tomcat流程,故/my路径不会被拦截器拦截）
+
+A： /my/
+
+B： /my/1
+
+
+
+### 2、使用RegistrationBean（spring低层提供）
+
+`ServletRegistrationBean` `FilterRegistrationBean` `ServletListenerRegistrationBean`
+
+```java
+@Configuration
+public class MyRegistConfig {
+
+    @Bean
+    public ServletRegistrationBean<MyServlet> myServlet() {
+        MyServlet servlet = new MyServlet();
+        return new ServletRegistrationBean<>(servlet, "/my", "/my02");
+    }
+
+    @Bean
+    public FilterRegistrationBean<MyFilter> myFilter() {
+//        return new FilterRegistrationBean<>(new MyFilter(), myServlet());
+        FilterRegistrationBean<MyFilter> filter = new FilterRegistrationBean<>(new MyFilter());
+        filter.setUrlPatterns(Arrays.asList("/css/*", "/images/*"));
+        return filter;
+    }
+
+    @Bean
+    public ServletListenerRegistrationBean<MyListener> myListener() {
+        return new ServletListenerRegistrationBean<>(new MyListener());
+    }
+}
+```
