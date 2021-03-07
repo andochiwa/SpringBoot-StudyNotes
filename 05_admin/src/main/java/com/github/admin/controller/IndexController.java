@@ -21,7 +21,7 @@ public class IndexController {
      * 来登录页
      */
     @GetMapping(value = {"/", "/login"})
-    public String loginPage() {
+    public String loginPage(HttpSession session) {
         return "login";
     }
 
