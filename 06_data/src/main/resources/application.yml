@@ -4,3 +4,28 @@ spring:
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
+
+    druid:
+      filters: stat,wall
+
+      max-active: 12
+
+      stat-view-servlet:
+        enabled: true
+        login-username: root
+        login-password: root
+        url-pattern: /druid/*
+        reset-enable: false
+
+      web-stat-filter:
+        exclusions: '*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*' # 可以不写，默认配置
+        enabled: true
+        url-pattern: /*
+      aop-patterns: com.github.boot.*
+
+      filter:
+        stat:
+          slow-sql-millis: 1000
+          log-slow-sql: true
+        wall:
+          enabled: true
