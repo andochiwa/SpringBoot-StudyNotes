@@ -29,3 +29,8 @@ spring:
           log-slow-sql: true
         wall:
           enabled: true
+
+# 配置mybatis的规则
+mybatis:
+  config-location: classpath:mybatis/mybatis-config.xml
+  mapper-locations: classpath:mybatis/mapper/*.xml
