@@ -14,6 +14,7 @@
         <module>03_web</module>
         <module>04_Thymeleaf</module>
         <module>05_admin</module>
+        <module>06_data</module>
     </modules>
 
     <properties>
