@@ -21,7 +21,7 @@ spring:
         exclusions: '*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*' # 可以不写，默认配置
         enabled: true
         url-pattern: /*
-      aop-patterns: com.github.boot.* #监控SpringBean
+      aop-patterns: com.github.admin.* #监控SpringBean
 
       filter: # 对上面filters里面的stat的详细配置
         stat:

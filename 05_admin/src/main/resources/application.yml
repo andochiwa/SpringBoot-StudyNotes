@@ -3,3 +3,40 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 100MB
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/test?serverTimezone=Japan
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+    druid:
+      filters: stat,wall # 底层开启功能，stat（sql监控），wall（防火墙）
+
+      max-active: 12
+
+      stat-view-servlet: # 配置监控页功能
+        enabled: true
+        login-username: root
+        login-password: root
+        url-pattern: /druid/*
+        reset-enable: false
+
+      web-stat-filter: # 监控web
+        exclusions: '*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*' # 可以不写，默认配置
+        enabled: true
+        url-pattern: /*
+      aop-patterns: com.github.boot.* #监控SpringBean
+
+      filter: # 对上面filters里面的stat的详细配置
+        stat:
+          slow-sql-millis: 1000
+          log-slow-sql: true
+        wall:
+          enabled: true
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true
+
