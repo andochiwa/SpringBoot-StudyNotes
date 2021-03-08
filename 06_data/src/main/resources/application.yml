@@ -32,5 +32,8 @@ spring:
 
 # 配置mybatis的规则
 mybatis:
-  config-location: classpath:mybatis/mybatis-config.xml
+#  config-location: classpath:mybatis/mybatis-config.xml  mybatis配置文件和yml只能选一个
   mapper-locations: classpath:mybatis/mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
