@@ -217,26 +217,12 @@ void testFail() {
 
 JUnit 5 中的前置条件（**assumptions【假设】**）类似于断言，不同之处在于**不满足的断言会使得测试方法失败**，而不满足的**前置条件只会使得测试方法的执行终止**。前置条件可以看成是测试方法执行的前提，当该前提不满足时，就没有继续执行的必要。
 
-```
+```java
 @DisplayName("前置条件")
-public class AssumptionsTest {
- private final String environment = "DEV";
- 
- @Test
- @DisplayName("simple")
- public void simpleAssume() {
-    assumeTrue(Objects.equals(this.environment, "DEV"));
-    assumeFalse(() -> Objects.equals(this.environment, "PROD"));
- }
- 
- @Test
- @DisplayName("assume then do")
- public void assumeThenDo() {
-    assumingThat(
-       Objects.equals(this.environment, "DEV"),
-       () -> System.out.println("In DEV")
-    );
- }
+@Test
+void testAssumptions() {
+    assumeTrue(false, "不是true");
+    System.out.println(1111);
 }
 ```
 
@@ -250,7 +236,8 @@ JUnit 5 可以通过 Java 中的内部类和@Nested 注解实现嵌套测试，�
 
 
 
-```
+```java
+@SpringBootTest
 @DisplayName("A stack")
 class TestingAStackDemo {
 
@@ -260,6 +247,8 @@ class TestingAStackDemo {
     @DisplayName("is instantiated with new Stack()")
     void isInstantiatedWithNew() {
         new Stack<>();
+        // 嵌套测试下，外层测试不能驱动内层测试
+        assertNotNull(stack);
     }
 
     @Nested
@@ -330,12 +319,7 @@ class TestingAStackDemo {
 
 参数化测试是JUnit5很重要的一个新特性，它使得用不同的参数多次运行测试成为了可能，也为我们的单元测试带来许多便利。
 
-
-
 利用**@ValueSource**等注解，指定入参，我们将可以使用不同的参数进行多次单元测试，而不需要每新增一个参数就新增一个单元测试，省去了很多冗余代码。
-
-**
-**
 
 **@ValueSource**: 为参数化测试指定入参来源，支持八大基础类以及String类型,Class类型
 
@@ -347,30 +331,30 @@ class TestingAStackDemo {
 
 **@MethodSource**：表示读取指定方法的返回值作为参数化测试入参(注意方法返回需要是一个流)
 
-
-
 > 当然如果参数化测试仅仅只能做到指定普通的入参还达不到让我觉得惊艳的地步。让我真正感到他的强大之处的地方在于他可以支持外部的各类入参。如:CSV,YML,JSON 文件甚至方法的返回值也可以作为入参。只需要去实现**ArgumentsProvider**接口，任何外部文件都可以作为它的入参。
 
-```
-@ParameterizedTest
-@ValueSource(strings = {"one", "two", "three"})
-@DisplayName("参数化测试1")
-public void parameterizedTest1(String string) {
-    System.out.println(string);
-    Assertions.assertTrue(StringUtils.isNotBlank(string));
-}
+```java
+@DisplayName("参数化测试")
+@SpringBootTest
+public class TestParameter {
+    @DisplayName("ValueSource来源")
+    @ParameterizedTest
+    @ValueSource(ints = {1, 2, 3, 4, 5})
+    void testParameterized(int i) {
+        System.out.println(i);
+    }
 
+    @ParameterizedTest
+    @MethodSource("method")    //指定方法名
+    @DisplayName("方法来源")
+    public void testWithExplicitLocalMethodSource(String name) {
+        System.out.println(name);
+        Assertions.assertNotNull(name);
+    }
 
-@ParameterizedTest
-@MethodSource("method")    //指定方法名
-@DisplayName("方法来源参数")
-public void testWithExplicitLocalMethodSource(String name) {
-    System.out.println(name);
-    Assertions.assertNotNull(name);
-}
-
-static Stream<String> method() {
-    return Stream.of("apple", "banana");
+    static Stream<String> method() {
+        return Stream.of("apple", "banana", "github");
+    }
 }
 ```
 

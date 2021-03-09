@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.*;
 
 /**
  * @author HAN
@@ -17,6 +18,17 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @DisplayName("测试断言")
 public class AssertTest {
+
+    /**
+     * Assumptions.*
+     * 测试前置条件（assumptions）
+     */
+    @DisplayName("前置条件")
+    @Test
+    void testAssumptions() {
+        assumeTrue(false, "不是true");
+        System.out.println(1111);
+    }
 
     /**
      * import static org.junit.jupiter.api.Assertions.assertEquals;
