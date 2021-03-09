@@ -390,3 +390,91 @@ public interface CityMapper {
 **优点：**
 
 -  只需要我们的Mapper继承 **BaseMapper** 就可以拥有crud能力
+-  service层接口可以继承**IService**，实现类可以继承**ServiceImpl**
+
+
+
+# 2、NoSQL
+
+Redis 是一个开源（BSD许可）的，内存中的数据结构存储系统，它可以用作数据库、**缓存**和消息中间件。 它支持多种类型的数据结构，如 [字符串（strings）](http://www.redis.cn/topics/data-types-intro.html#strings)， [散列（hashes）](http://www.redis.cn/topics/data-types-intro.html#hashes)， [列表（lists）](http://www.redis.cn/topics/data-types-intro.html#lists)， [集合（sets）](http://www.redis.cn/topics/data-types-intro.html#sets)， [有序集合（sorted sets）](http://www.redis.cn/topics/data-types-intro.html#sorted-sets) 与范围查询， [bitmaps](http://www.redis.cn/topics/data-types-intro.html#bitmaps)， [hyperloglogs](http://www.redis.cn/topics/data-types-intro.html#hyperloglogs) 和 [地理空间（geospatial）](http://www.redis.cn/commands/geoadd.html) 索引半径查询。 Redis 内置了 [复制（replication）](http://www.redis.cn/topics/replication.html)，[LUA脚本（Lua scripting）](http://www.redis.cn/commands/eval.html)， [LRU驱动事件（LRU eviction）](http://www.redis.cn/topics/lru-cache.html)，[事务（transactions）](http://www.redis.cn/topics/transactions.html) 和不同级别的 [磁盘持久化（persistence）](http://www.redis.cn/topics/persistence.html)， 并通过 [Redis哨兵（Sentinel）](http://www.redis.cn/topics/sentinel.html)和自动 [分区（Cluster）](http://www.redis.cn/topics/cluster-tutorial.html)提供高可用性（high availability）。
+
+## 1、Redis自动配置
+
+```xml
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+```
+
+自动配置：
+
+- RedisAutoConfiguration 自动配置类。RedisProperties 属性类 --> **spring.redis.xxx是对redis的配置**
+
+- 连接工厂是准备好的。LettuceConnectionConfiguration、JedisConnectionConfiguration
+
+- 自动注入了**RedisTemplate<Object, Object>** ： xxxTemplate；
+
+- 自动注入了StringRedisTemplate；k，v都是String
+
+- **底层只要我们使用 StringRedisTemplate、RedisTemplate就可以操作redis**
+
+  
+
+**redis环境搭建**
+
+1、华为云按量付费redis。经典网络
+
+2、申请redis的公网连接地址
+
+3、修改白名单  允许0.0.0.0/0 访问
+
+
+
+
+
+## 2、RedisTemplate与Lettuce
+
+```
+    @Test
+    void testRedis(){
+        ValueOperations<String, String> operations = redisTemplate.opsForValue();
+
+        operations.set("hello","world");
+
+        String hello = operations.get("hello");
+        System.out.println(hello);
+    }
+```
+
+
+
+
+
+
+
+
+
+## 3、切换至jedis
+
+```
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
+<!--        导入jedis-->
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+        </dependency>
+spring:
+  redis:
+      host: r-bp1nc7reqesxisgxpipd.redis.rds.aliyuncs.com
+      port: 6379
+      password: lfy:Lfy123456
+      client-type: jedis
+      jedis:
+        pool:
+          max-active: 10
+```
