@@ -34,6 +34,10 @@ spring:
           log-slow-sql: true
         wall:
           enabled: true
+  boot:
+    admin:
+      client:
+        url: http://localhost:8888
 
 mybatis-plus:
   configuration:
@@ -44,7 +48,7 @@ mybatis-plus:
 # endpoint 对某个端点的具体配置
 management:
   endpoints:
-    enabled-by-default: false  #默认开启所有监控端点
+    enabled-by-default: true  #默认开启所有监控端点
     web:
       exposure:
         include: '*' #以web方式暴露所有端点
