@@ -40,3 +40,21 @@ mybatis-plus:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     map-underscore-to-camel-case: true
 
+# management为所有actuator的配置
+# endpoint 对某个端点的具体配置
+management:
+  endpoints:
+    enabled-by-default: false  #默认开启所有监控端点
+    web:
+      exposure:
+        include: '*' #以web方式暴露所有端点
+  endpoint:
+    health:
+      show-details: always
+      enabled: true
+    info:
+      enabled: true
+    beans:
+      enabled: true
+    metrics:
+      enabled: true
