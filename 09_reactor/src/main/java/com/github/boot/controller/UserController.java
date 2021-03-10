@@ -11,8 +11,9 @@ import reactor.core.publisher.Mono;
  * @author HAN
  * @version 1.0
  * @create 03-11-5:07
+ * @see com.github.boot.handler.UserHandler 函数式
  */
-@RestController
+//@RestController
 public class UserController {
 
     @Autowired
