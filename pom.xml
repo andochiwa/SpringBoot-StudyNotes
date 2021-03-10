@@ -15,6 +15,9 @@
         <module>04_Thymeleaf</module>
         <module>05_admin</module>
         <module>06_data</module>
+        <module>07_junit</module>
+        <module>08_adminserver</module>
+        <module>09_reactor</module>
     </modules>
 
     <properties>
