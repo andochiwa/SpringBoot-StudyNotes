@@ -25,7 +25,6 @@ public class UserController {
         Mono<User> userMono = Mono.fromSupplier(this::getUser);
         log.info("webflux get end");
         return userMono;
-
     }
 
     // spring mvc
