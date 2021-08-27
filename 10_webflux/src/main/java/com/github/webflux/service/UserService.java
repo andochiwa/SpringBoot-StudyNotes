@@ -22,4 +22,9 @@ public class UserService {
     public Mono<User> getUserById(Long id) {
         return userDao.findById(id);
     }
+
+    public Mono<Void> saveUser(User user) {
+        return userDao.save(user)
+                .then(Mono.empty());
+    }
 }
