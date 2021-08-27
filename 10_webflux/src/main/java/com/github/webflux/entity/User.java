@@ -3,6 +3,7 @@ package com.github.webflux.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
 
 /**
  * @author HAN
@@ -14,7 +15,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class User {
 
-    private String name;
+    @Id
+    private Long id;
 
-    private String email;
+    private String name;
 }

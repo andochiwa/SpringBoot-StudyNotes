@@ -1,9 +1,12 @@
 package com.github.webflux.controller;
 
 import com.github.webflux.entity.User;
+import com.github.webflux.service.UserService;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
@@ -17,6 +20,9 @@ import java.util.concurrent.TimeUnit;
 @RestController
 @Slf4j
 public class UserController {
+
+    @Autowired
+    private UserService userService;
 
     // webflux
     @GetMapping("/mono")
@@ -39,7 +45,12 @@ public class UserController {
     @SneakyThrows
     private User getUser() {
         TimeUnit.SECONDS.sleep(5);
-        return new User("hello", "hello@gmail.com");
+        return new User(5L, "hello");
+    }
+
+    @GetMapping("/r2dbc/{id}")
+    public Mono<User> getUserById(@PathVariable("id") Long id) {
+        return userService.getUserById(id);
     }
 
 }
